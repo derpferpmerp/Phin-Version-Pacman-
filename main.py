@@ -62,7 +62,7 @@ class Bird(pygame.sprite.Sprite):
 
 pygame.init()
 screen = pygame.display.set_mode((1000, 1000))
-screen.fill((0,0,0)) # fill the screen with white
+screen.fill(black) # fill the screen with white
 bird = Bird() # create an instance
 clock = pygame.time.Clock()
 #pygame.draw.r
@@ -91,10 +91,8 @@ def dificulty_setting():
 	rText(font1,"ultimate",crds=(275,50))
 	rText(font1,"PAC MAN",crds=(250,160))
 	rText(font1,"choose a dificulty",crds=(50,275))
-	
-	d_rect((100,500,200,200), green)
-	d_rect((400,500,200,200), blue)
-	d_rect((700,500,200,200), red)
+	for x in range(3):
+		d_rect(((300 * (x + 1)) - 200, 500, 200, 200), [green,blue,red][x])
 	d_rect((250,750,500,200), aqua)
 
 	for itr in range(3): 
