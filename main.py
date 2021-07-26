@@ -1,9 +1,15 @@
 import pygame
 from runner import main as astar
 from tools import gen_maze_img as gmi
+import os
 
 global white,black,red,blue,green,aqua
 white,black,red,blue,green,aqua = [(255,255,255),(0,0,0),(255,0,0),(0,0,255),(0,255,0),(0,255,255)]
+
+
+def pathfix(inp):
+	splitted = inp.split("/")
+	return os.path.join(*splitted)
 
 class Bird(pygame.sprite.Sprite):
 	def __init__(self):
@@ -14,11 +20,11 @@ class Bird(pygame.sprite.Sprite):
 		super().__init__()
 		self.imgdct = {}
 		self.images = self.imgdct["RIGHT"], self.imgdct["DOWN"], self.imgdct["UP"], self.imgdct["LEFT"] = [[
-				pygame.image.load(f"images/{itm}/player_{num}.png")
+				pygame.image.load(pathfix(f"images/{itm}/player_{num}.png"))
 				for num in range(0, 4)
 		] for itm in ["RIGHT", "DOWN", "UP", "LEFT"]]
 		self.index = 0
-		self.image = pygame.image.load("images/RIGHT/player_0.png")
+		self.image = pygame.image.load(pathfix("images/RIGHT/player_0.png"))
 		self.width, self.height = [self.image.get_width(), self.image.get_height()]
 		self.slowdown = 6
 		self.actualslow = 0
@@ -32,6 +38,8 @@ class Bird(pygame.sprite.Sprite):
 			self.ckey = key
 		if self.ckey != None and self.ckey != key and 1 in tuple(key):
 			self.ckey = key
+		if self.ckey == key:
+			return 0
 		dist = 1
 		if key[pygame.K_DOWN] or k == "DOWN":
 			self.y += dist * self.speed
@@ -73,7 +81,7 @@ def border(cs,sc=screen,pxw=4,clr=(255,255,255)):
 	pygame.draw.rect(sc,clr,cs,pxw)
 
 def rText(fnt,txt,clr=(255,255,255),rtrn=False,sc=screen,crds=False):
-	if not rtrn and crds != False and type(crds) == type([]):
+	if not rtrn and crds != False:
 		sc.blit(fnt.render(txt,True,clr),crds)
 	if rtrn: return fnt.render(txt,True,clr)
 
@@ -82,11 +90,11 @@ def d_rect(crds,clr,sc=screen,brdr=True):
 	if brdr: border(crds)
 
 def dificulty_setting():
-	image1 = pygame.image.load("images/MUW4Dh6-pacman-background.jpg")
+	image1 = pygame.image.load(pathfix("images/MUW4Dh6-pacman-background.jpg"))
 	screen.blit(image1, (0, 0))
 
-	font1 = pygame.font.Font(None, 150)
-	font2 = pygame.font.Font(None, 300)
+	font1 = pygame.font.Font(pathfix("fonts/GoogleSans-Regular.ttf"), 100)
+	font2 = pygame.font.Font(pathfix("fonts/GoogleSans-Regular.ttf"), 200)
 
 	rText(font1,"ultimate",crds=(275,50))
 	rText(font1,"PAC MAN",crds=(250,160))
@@ -102,9 +110,9 @@ def dificulty_setting():
 			tuple([
 				[1 if x == itr else 0][0] for x in range(1, 4)
 			][0:2][::-1] + [0]
-		)), (300 * (itr + 2) - 460, 500))
+		)), (300 * (itr + 2) - 444, 480))
 	caption5 = font1.render("campaign", True, (0, 0, 1))
-	screen.blit(caption5, (250, 800))
+	screen.blit(caption5, (271, 800))
 	pygame.display.update()
 
 running = True
@@ -114,7 +122,7 @@ bckey = None
 decision = 1
 
 def s_eq2_clr(crds,sc=screen,clr=white):
-	return [True if pygame.Surface.get_at(sc, crds) == clr else False][0]
+	return pygame.Surface.get_at(sc, crds) == clr
 
 
 while running:
@@ -163,11 +171,12 @@ while running:
 		bird.handle_keys()
 
 		bckey = {
-			"DOWN": [False if bird.ckey[pygame.K_DOWN] == 0 else True][0],
-			"UP": [False if bird.ckey[pygame.K_UP] == 0 else True][0],
-			"LEFT": [False if bird.ckey[pygame.K_LEFT] == 0 else True][0],
-			"RIGHT": [False if bird.ckey[pygame.K_RIGHT] == 0 else True][0],
+			"DOWN": bool(bird.ckey[pygame.K_DOWN]),
+			"UP": bool(bird.ckey[pygame.K_UP]),
+			"LEFT": bool(bird.ckey[pygame.K_LEFT]),
+			"RIGHT": bool(bird.ckey[pygame.K_RIGHT]),
 		}
+
 		kk = "RIGHT"
 		for x in list(bckey.keys()):
 			if bckey[x] == True:

@@ -36,7 +36,7 @@ def maze(width=81, height=51, complexity=.75, density =.75, b=True, bl=False):
 		return [1 * Z if not bl else Z][0]
 
 def gen_maze_img(w=15,h=15,c=0.75,d=0.75,brdr=True,m=0.5,bl2=True,grid=False):
-	plt.figure(figsize=(w,h))
+	plt.figure(figsize=(15,15))
 	cmap = colors.ListedColormap(['black', 'white','#39ff14',"red"])
 	bounds=[0,0.9,1.9,2.9,3.9]
 	norm = colors.BoundaryNorm(bounds, cmap.N)
